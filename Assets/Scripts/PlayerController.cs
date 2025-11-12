@@ -18,20 +18,24 @@ public class PlayerController : MonoBehaviour
     [Header("Multiplayer")]
     [SerializeField] Color player_ONE_Color = new Color(211, 73, 42);
     [SerializeField] Color player_TWO_Color = new Color(125, 67, 42);
-    //SpriteRenderer 
+    public PlayerStat playerStat;
 
-    public ulong deaths = 0;
-    
-    private byte index;
-    GameObject parent;
+
     Rigidbody2D rb;
+
+
+    [Header ("public")]
+    public byte index;
+    public bool alive = true;
+    public GameObject parent;
+    public GameLogic gameLogic;
+
     private void Awake()
     {
-        parent = transform.parent.gameObject;
-        index = (byte)transform.GetSiblingIndex();
-        //Debug.Log(index);
         rb = GetComponent<Rigidbody2D>();
-
+    }
+    public void SetColor(byte index)
+    {
         transform.Find("Body").GetComponent<SpriteRenderer>().color = (index == 0) ? player_ONE_Color : player_TWO_Color;
     }
     void Start()
@@ -89,7 +93,8 @@ public class PlayerController : MonoBehaviour
     void Shoot()
     {
         //Instantiate(bullet, bulletPoint, true);
-        Instantiate(bullet, bulletPoint.position, bulletPoint.rotation);
+        GameObject proj = Instantiate(bullet, bulletPoint.position, bulletPoint.rotation);
+        proj.GetComponent<Bullet>().ownerID = index;
     }
 
     int Player1Vertical()
@@ -123,8 +128,18 @@ public class PlayerController : MonoBehaviour
         switch(collision.gameObject.tag)
         {
             case "Bullet":
+                bool myBullet = (collision.gameObject.GetComponent<Bullet>().ownerID == index) ? true : false;
                 gameObject.SetActive(false);
-                deaths++;
+                alive = false;
+                play
+                switch (myBullet)
+                {
+                    case true:
+                        
+                        break;
+                    default:
+                        playerStat.
+                }
                 break;
 
         }
