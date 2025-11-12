@@ -14,6 +14,7 @@ public class PlayerStat : MonoBehaviour
         playerName = $"Player{playerIndex}";
         wins = 0;
         deaths = 0;
+        kills = 0;
     }
     public void Died()
     {

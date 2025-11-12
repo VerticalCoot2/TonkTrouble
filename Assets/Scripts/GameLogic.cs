@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Accessibility;
 [System.Serializable]
@@ -31,7 +32,7 @@ internal class Map
 
 public class GameLogic : MonoBehaviour
 {
-    [SerializeField] ulong round = 1;
+    [SerializeField] ulong round = 0;
 
 
 
@@ -69,11 +70,18 @@ public class GameLogic : MonoBehaviour
             thisScript.gameLogic = gameObject.GetComponent<GameLogic>();
         }
     }
+    private void Start()
+    {
+        NewMap();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.Return))
+        {
+            NewMap();
+        }
     }
 
     //public void GetDeath(byte playerIndex, bool suicide)
@@ -84,5 +92,50 @@ public class GameLogic : MonoBehaviour
     IEnumerator SomeoneDied()
     {
         yield return new WaitForSeconds(3);
+    }
+
+    public void NewMap()
+    {
+        round++;
+        for(int i = 0; i < mapHolder.transform.childCount; i++)
+        {
+            mapHolder.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        List<Transform> spawnPoints;
+        
+        if(maps.Count > 0)
+        {
+
+            int randomMapIndex = UnityEngine.Random.Range(0, mapHolder.transform.childCount-1);
+            mapHolder.transform.GetChild(randomMapIndex).gameObject.SetActive(true);
+            spawnPoints = maps[randomMapIndex].GetSpawnPoints();
+            byte playerPlaced = 0;
+            int occupiedIndex = int.MinValue;
+            while (playerPlaced != 2)
+            {
+                int randomSpawnPointIndex = UnityEngine.Random.Range(0, spawnPoints.Count - 1);
+                if(occupiedIndex != randomSpawnPointIndex)
+                {
+                    if(players.Count <= 2)
+                    {
+                        for(int i = 0; i < playerHolder.childCount; i++)
+                        {
+                            Destroy(playerHolder.transform.GetChild(i));
+                        }
+
+                        players.Clear();
+
+                        GameObject player = Instantiate(playerPrefab, playerHolder);
+                        player.GetComponent<PlayerController>().SetIndex(playerPlaced);
+                        players.Add(player);
+                    }
+                    Debug.Log(playerPlaced);
+                    players[playerPlaced].transform.position = spawnPoints[randomSpawnPointIndex].position;
+                    playerPlaced++;
+                    occupiedIndex = randomSpawnPointIndex;
+
+                }
+            }
+        }
     }
 }

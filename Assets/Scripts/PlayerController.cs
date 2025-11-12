@@ -34,8 +34,9 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
     }
-    public void SetColor(byte index)
+    public void SetIndex(byte index)
     {
+        this.index = index;
         transform.Find("Body").GetComponent<SpriteRenderer>().color = (index == 0) ? player_ONE_Color : player_TWO_Color;
     }
     void Start()
@@ -46,48 +47,52 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        #region Rotation
-        switch(index)
+        if(alive)
         {
-            case 0:
-                transform.Rotate(new Vector3(0, 0, (Player1Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
-                break;
-            case 1:
-                transform.Rotate(new Vector3(0, 0, (Player2Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
-                break;
-        }
-        #endregion
+            #region Rotation
+            switch (index)
+            {
+                case 0:
+                    transform.Rotate(new Vector3(0, 0, (Player1Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
+                    break;
+                case 1:
+                    transform.Rotate(new Vector3(0, 0, (Player2Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
+                    break;
+            }
+            #endregion
 
-        
-
-        switch(index)
-        {
-            case 0:
-                if(Input.GetKeyDown(KeyCode.Q))
-                {
-                    Shoot();
-                }
-                break;
-            case 1:
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    Shoot();
-                }
-                break;
+            switch (index)
+            {
+                case 0:
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        Shoot();
+                    }
+                    break;
+                case 1:
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        Shoot();
+                    }
+                    break;
+            }
         }
     }
     void FixedUpdate()
     {
         rb.velocity = transform.right * moveSpeed * Input.GetAxisRaw("Vertical");
-        switch(index)
+        if(alive)
         {
-            case 0:
-                rb.velocity = transform.right * moveSpeed * Player1Vertical();
-                break;
+            switch (index)
+            {
+                case 0:
+                    rb.velocity = transform.right * moveSpeed * Player1Vertical();
+                    break;
 
-            case 1:
-                rb.velocity = transform.right * moveSpeed * Player2Vertical();
-                break;
+                case 1:
+                    rb.velocity = transform.right * moveSpeed * Player2Vertical();
+                    break;
+            }
         }
     }
     void Shoot()
@@ -129,17 +134,18 @@ public class PlayerController : MonoBehaviour
         {
             case "Bullet":
                 bool myBullet = (collision.gameObject.GetComponent<Bullet>().ownerID == index) ? true : false;
-                gameObject.SetActive(false);
+                
                 alive = false;
-                play
-                switch (myBullet)
-                {
-                    case true:
-                        
-                        break;
-                    default:
-                        playerStat.
-                }
+                playerStat.Died();
+                //switch (myBullet)
+                //{
+                //    case true:
+
+                //        break;
+                //    default:
+                //        playerStat.
+                //}
+                gameObject.SetActive(false);
                 break;
 
         }
