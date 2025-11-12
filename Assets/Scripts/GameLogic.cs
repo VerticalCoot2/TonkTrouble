@@ -129,6 +129,7 @@ public class GameLogic : MonoBehaviour
                         player.GetComponent<PlayerController>().SetIndex(playerPlaced);
                         players.Add(player);
                     }
+
                     Debug.Log(playerPlaced);
                     players[playerPlaced].transform.position = spawnPoints[randomSpawnPointIndex].position;
                     playerPlaced++;
