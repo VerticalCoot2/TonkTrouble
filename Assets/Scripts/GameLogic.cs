@@ -73,6 +73,7 @@ public class GameLogic : MonoBehaviour
     private void Start()
     {
         NewMap();
+        
     }
 
     // Update is called once per frame
@@ -89,7 +90,7 @@ public class GameLogic : MonoBehaviour
 
     //}
 
-    IEnumerator SomeoneDied()
+    public IEnumerator SomeoneDied()
     {
         yield return new WaitForSeconds(3);
     }
@@ -114,21 +115,22 @@ public class GameLogic : MonoBehaviour
             while (playerPlaced != 2)
             {
                 int randomSpawnPointIndex = UnityEngine.Random.Range(0, spawnPoints.Count - 1);
+                Debug.Log(playerPlaced);
                 if(occupiedIndex != randomSpawnPointIndex)
                 {
-                    if(players.Count <= 2)
-                    {
-                        for(int i = 0; i < playerHolder.childCount; i++)
-                        {
-                            Destroy(playerHolder.transform.GetChild(i));
-                        }
+                    //if(players.Count <= 2)
+                    //{
+                    //    for(int i = 0; i < playerHolder.childCount; i++)
+                    //    {
+                    //        Destroy(playerHolder.transform.GetChild(i).gameObject);
+                    //    }
 
                         players.Clear();
 
                         GameObject player = Instantiate(playerPrefab, playerHolder);
                         player.GetComponent<PlayerController>().SetIndex(playerPlaced);
                         players.Add(player);
-                    }
+                    //}
 
                     Debug.Log(playerPlaced);
                     players[playerPlaced].transform.position = spawnPoints[randomSpawnPointIndex].position;

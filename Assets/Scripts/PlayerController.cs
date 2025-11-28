@@ -77,10 +77,14 @@ public class PlayerController : MonoBehaviour
                     break;
             }
         }
+        else
+        {
+
+        }
     }
     void FixedUpdate()
     {
-        rb.velocity = transform.right * moveSpeed * Input.GetAxisRaw("Vertical");
+        //rb.velocity = transform.right * moveSpeed * Input.GetAxisRaw("Vertical");
         if(alive)
         {
             switch (index)
@@ -137,6 +141,7 @@ public class PlayerController : MonoBehaviour
                 
                 alive = false;
                 playerStat.Died();
+                gameLogic.StartCoroutine(SomeoneDied());
                 //switch (myBullet)
                 //{
                 //    case true:
