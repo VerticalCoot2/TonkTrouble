@@ -6,8 +6,10 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public int ownerID;
+    public GameObject parent;
     GameLogic gameLogic;
     Rigidbody2D rb;
+    
     private void Awake()
     {
         gameLogic = GameObject.Find("GameLogic").GetComponent<GameLogic>();
@@ -15,7 +17,7 @@ public class Bullet : MonoBehaviour
     }
     void Start()
     {
-        Debug.Log(ownerID);
+        //Debug.Log(ownerID);
         rb.AddForce(transform.right * 200);
         StartCoroutine(Delete());
     }
@@ -40,6 +42,10 @@ public class Bullet : MonoBehaviour
         {
             case "Player":
                 Destroy(gameObject);
+                if(collision.gameObject != parent)
+                {
+                    parent.GetComponent<PlayerController>().Killed();
+                }
                 break;
         }
     }

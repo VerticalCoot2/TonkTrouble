@@ -32,8 +32,8 @@ internal class Map
 
 public class GameLogic : MonoBehaviour
 {
-    [SerializeField] ulong round = 0;
-
+    public static ulong round = 0;
+    [SerializeField] Color[] playerColors = { new Color(211, 73, 42), new Color(255, 0, 255) };
 
 
     [Header("Map")]
@@ -41,9 +41,12 @@ public class GameLogic : MonoBehaviour
     [SerializeField] List<Map> maps = new List<Map>();
 
     [Header("Players")]
+    [SerializeField] Transform bulletHolder;
     [SerializeField] Transform playerHolder;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] List<GameObject> players = new List<GameObject>();
+
+    [SerializeField] Statistics statHolder;
     public bool roundOngoing = true;
 
     void Awake()
@@ -63,17 +66,21 @@ public class GameLogic : MonoBehaviour
         for(int i = 0; i < playerHolder.childCount; i++)
         {
             GameObject THIS = Instantiate(playerPrefab, playerHolder);
-            var thisScript = THIS.GetComponent<PlayerController>();
-            thisScript.parent = playerHolder.gameObject;
-            thisScript.index = (byte)i;
-            thisScript.playerStat = new PlayerStat((byte)i);
-            thisScript.gameLogic = gameObject.GetComponent<GameLogic>();
+            var playerControllerScript = THIS.GetComponent<PlayerController>();            
+            playerControllerScript.index = (byte)i;
+
+            playerControllerScript.parent = playerHolder.gameObject;
+
+            //Debug.Log(this.gameObject.GetComponent<GameLogic>());
+            playerControllerScript.gameLogic = this.gameObject.GetComponent<GameLogic>();
         }
     }
     private void Start()
     {
         NewMap();
+        //Debug.Log(stats.AddPlayerShit(playerColors[0], playerColors[1]));
         
+        statHolder.AddPlayerShit(playerColors[0], playerColors[1]);
     }
 
     // Update is called once per frame
@@ -93,51 +100,57 @@ public class GameLogic : MonoBehaviour
     public IEnumerator SomeoneDied()
     {
         yield return new WaitForSeconds(3);
+        Debug.Log("New rounding...");
+        NewMap();
     }
 
     public void NewMap()
     {
-        round++;
+        round = round + 1;
         for(int i = 0; i < mapHolder.transform.childCount; i++)
         {
             mapHolder.transform.GetChild(i).gameObject.SetActive(false);
         }
+
+        for (int i = 0; i < playerHolder.transform.childCount; i++)
+        {
+            Destroy(playerHolder.transform.GetChild(i).gameObject);
+        }
+
+        for (int i = 0; i < bulletHolder.childCount; i++)
+        {
+            Destroy(bulletHolder.transform.GetChild(i).gameObject);
+        }
+
         List<Transform> spawnPoints;
         
         if(maps.Count > 0)
         {
+            players.Clear();
 
-            int randomMapIndex = UnityEngine.Random.Range(0, mapHolder.transform.childCount-1);
+            int randomMapIndex = UnityEngine.Random.Range(0, mapHolder.transform.childCount);
             mapHolder.transform.GetChild(randomMapIndex).gameObject.SetActive(true);
-            spawnPoints = maps[randomMapIndex].GetSpawnPoints();
-            byte playerPlaced = 0;
-            int occupiedIndex = int.MinValue;
-            while (playerPlaced != 2)
+            spawnPoints = new List<Transform>(maps[randomMapIndex].GetSpawnPoints());
+            for (int i = 0; i < 2; i++)
             {
-                int randomSpawnPointIndex = UnityEngine.Random.Range(0, spawnPoints.Count - 1);
-                Debug.Log(playerPlaced);
-                if(occupiedIndex != randomSpawnPointIndex)
-                {
-                    //if(players.Count <= 2)
-                    //{
-                    //    for(int i = 0; i < playerHolder.childCount; i++)
-                    //    {
-                    //        Destroy(playerHolder.transform.GetChild(i).gameObject);
-                    //    }
+                GameObject player = Instantiate(playerPrefab, playerHolder);
+                var playerControllerScript = player.GetComponent<PlayerController>();
+                playerControllerScript.index = (byte)i;
 
-                        players.Clear();
+                playerControllerScript.parent = playerHolder.gameObject;
+                playerControllerScript.gameLogic = this.gameObject.GetComponent<GameLogic>();
+                playerControllerScript.bulletHolder = bulletHolder;
+                playerControllerScript.player_ONE_Color = playerColors[0];
+                playerControllerScript.player_TWO_Color = playerColors[1];
+                playerControllerScript.stats = statHolder;
 
-                        GameObject player = Instantiate(playerPrefab, playerHolder);
-                        player.GetComponent<PlayerController>().SetIndex(playerPlaced);
-                        players.Add(player);
-                    //}
+                int SPI = UnityEngine.Random.Range(0, spawnPoints.Count);
 
-                    Debug.Log(playerPlaced);
-                    players[playerPlaced].transform.position = spawnPoints[randomSpawnPointIndex].position;
-                    playerPlaced++;
-                    occupiedIndex = randomSpawnPointIndex;
+                player.transform.position = spawnPoints[SPI].position;
+                
 
-                }
+                players.Add(player);
+                spawnPoints.RemoveAt(SPI);
             }
         }
     }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.Properties;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,9 +18,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Queue<GameObject> magazine;
 
     [Header("Multiplayer")]
-    [SerializeField] Color player_ONE_Color = new Color(211, 73, 42);
-    [SerializeField] Color player_TWO_Color = new Color(125, 67, 42);
-    public PlayerStat playerStat;
+
+    public Color player_ONE_Color;
+    public Color player_TWO_Color;
 
 
     Rigidbody2D rb;
@@ -29,19 +31,28 @@ public class PlayerController : MonoBehaviour
     public bool alive = true;
     public GameObject parent;
     public GameLogic gameLogic;
+    public Transform bulletHolder;
+    public Statistics stats;
+
+    [Header("\nK/D")]
+    public uint kills = 0;
+    public uint death = 0;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
     }
-    public void SetIndex(byte index)
-    {
-        this.index = index;
-        transform.Find("Body").GetComponent<SpriteRenderer>().color = (index == 0) ? player_ONE_Color : player_TWO_Color;
-    }
+    //public void SetIndex(byte index)
+    //{
+    //    this.index = index;
+    //    
+    //}
     void Start()
     {
         transform.right = transform.parent.GetChild((index == 0) ? 1 : 0).transform.position - transform.position;
+        transform.Find("Body").GetComponent<SpriteRenderer>().color = (index == 0) ? player_ONE_Color : player_TWO_Color;
+        transform.rotation = Quaternion.Euler((float)transform.rotation.x, 0, (float)transform.rotation.z);
     }
 
     // Update is called once per frame
@@ -102,8 +113,9 @@ public class PlayerController : MonoBehaviour
     void Shoot()
     {
         //Instantiate(bullet, bulletPoint, true);
-        GameObject proj = Instantiate(bullet, bulletPoint.position, bulletPoint.rotation);
+        GameObject proj = Instantiate(bullet, bulletPoint.position, bulletPoint.rotation, bulletHolder);
         proj.GetComponent<Bullet>().ownerID = index;
+        proj.GetComponent<Bullet>().parent = this.gameObject;
     }
 
     int Player1Vertical()
@@ -132,25 +144,27 @@ public class PlayerController : MonoBehaviour
         else return 0;
     }
 
+    public void Killed()
+    {
+        stats.players[index].Killed();
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         switch(collision.gameObject.tag)
         {
             case "Bullet":
                 bool myBullet = (collision.gameObject.GetComponent<Bullet>().ownerID == index) ? true : false;
-                
+                Debug.Log((myBullet) ? "suicide" : "killed");
                 alive = false;
-                playerStat.Died();
-                gameLogic.StartCoroutine(SomeoneDied());
-                //switch (myBullet)
-                //{
-                //    case true:
-
-                //        break;
-                //    default:
-                //        playerStat.
-                //}
-                gameObject.SetActive(false);
+                stats.players[index].Died();
+                //Debug.Log(this.gameObject);
+                StartCoroutine(gameLogic.SomeoneDied());
+                gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                for(int i = 0; i < gameObject.transform.childCount;i++)
+                {
+                    gameObject.transform.GetChild(i).gameObject.SetActive(false );
+                }
                 break;
 
         }

@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 3185938213951383201}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: -0.1}
-  m_LocalScale: {x: 0.5, y: 0.2, z: 1}
+  m_LocalPosition: {x: 0.25018, y: 0, z: -0.1}
+  m_LocalScale: {x: 0.500355, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5102407946503270245}
@@ -258,7 +258,11 @@ MonoBehaviour:
   bulletPoint: {fileID: 5152191151340141452}
   player_ONE_Color: {r: 0.11414204, g: 0.26214308, b: 0.4245283, a: 1}
   player_TWO_Color: {r: 0.13901745, g: 0.41509432, b: 0.16308981, a: 1}
-  deaths: 0
+  playerStat: {fileID: 0}
+  index: 0
+  alive: 1
+  parent: {fileID: 0}
+  gameLogic: {fileID: 0}
 --- !u!50 &4650025882443916436
 Rigidbody2D:
   serializedVersion: 4
