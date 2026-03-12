@@ -59,9 +59,10 @@ public class PlayerController : MonoBehaviour
         {
 
             GameObject proj = Instantiate(bullet, bulletHolder.transform);
+            Bullet projB = proj.GetComponent<Bullet>();
             //proj.GetComponent<Bullet>().ownerID = index;
-            proj.GetComponent<Bullet>().owner = this;
-            proj.GetComponent<Bullet>().gameLogic = this.gameLogic;
+            projB.owner = this;
+            projB.gameLogic = this.gameLogic;
             magazine.Enqueue(proj);
         }
     }

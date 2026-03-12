@@ -66,7 +66,7 @@ public class GameLogic : MonoBehaviour
         for(int i = 0; i < playerHolder.childCount; i++)
         {
             GameObject THIS = Instantiate(playerPrefab, playerHolder);
-            var playerControllerScript = THIS.GetComponent<PlayerController>();            
+            PlayerController playerControllerScript = THIS.GetComponent<PlayerController>();            
             playerControllerScript.index = (byte)i;
 
             playerControllerScript.parent = playerHolder.gameObject;
@@ -135,11 +135,11 @@ public class GameLogic : MonoBehaviour
             for (int i = 0; i < 2; i++)
             {
                 GameObject player = Instantiate(playerPrefab, playerHolder);
-                var playerControllerScript = player.GetComponent<PlayerController>();
+                PlayerController playerControllerScript = player.GetComponent<PlayerController>();
                 playerControllerScript.index = (byte)i;
 
                 playerControllerScript.parent = playerHolder.gameObject;
-                playerControllerScript.gameLogic = this.gameObject.GetComponent<GameLogic>();
+                playerControllerScript.gameLogic = this;
                 playerControllerScript.bulletHolder = bulletHolder;
                 playerControllerScript.player_ONE_Color = playerColors[0];
                 playerControllerScript.player_TWO_Color = playerColors[1];
