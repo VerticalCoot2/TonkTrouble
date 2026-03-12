@@ -161,17 +161,17 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.5
+  m_Time: 0.4
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.14
+    widthMultiplier: 0.11898178
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.72395897
+        value: 0.709924
         inSlope: -1.1516396
         outSlope: -1.1516396
         tangentMode: 0
@@ -245,7 +245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ownerID: 0
-  parent: {fileID: 0}
+  owner: {fileID: 0}
+  gameLogic: {fileID: 0}
 --- !u!58 &2994279000834228962
 CircleCollider2D:
   m_ObjectHideFlags: 0

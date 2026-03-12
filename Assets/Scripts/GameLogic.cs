@@ -106,7 +106,7 @@ public class GameLogic : MonoBehaviour
 
     public void NewMap()
     {
-        round = round + 1;
+        round++;
         for(int i = 0; i < mapHolder.transform.childCount; i++)
         {
             mapHolder.transform.GetChild(i).gameObject.SetActive(false);
@@ -119,6 +119,7 @@ public class GameLogic : MonoBehaviour
 
         for (int i = 0; i < bulletHolder.childCount; i++)
         {
+            //bulletHolder.transform.GetChild(i).GetComponent<Bullet>().Reload();
             Destroy(bulletHolder.transform.GetChild(i).gameObject);
         }
 

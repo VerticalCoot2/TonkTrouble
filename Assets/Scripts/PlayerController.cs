@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [Header("Shooting")]
     [SerializeField] private GameObject bullet;
     [SerializeField] private Transform bulletPoint;
-    [SerializeField] private Queue<GameObject> magazine;
+    [SerializeField] public Queue<GameObject> magazine = new Queue<GameObject>();
 
     [Header("Multiplayer")]
 
@@ -40,9 +40,11 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        
         rb = GetComponent<Rigidbody2D>();
 
     }
+
     //public void SetIndex(byte index)
     //{
     //    this.index = index;
@@ -53,6 +55,15 @@ public class PlayerController : MonoBehaviour
         transform.right = transform.parent.GetChild((index == 0) ? 1 : 0).transform.position - transform.position;
         transform.Find("Body").GetComponent<SpriteRenderer>().color = (index == 0) ? player_ONE_Color : player_TWO_Color;
         transform.rotation = Quaternion.Euler((float)transform.rotation.x, 0, (float)transform.rotation.z);
+        for (int i = 0; i < 5; i++)
+        {
+
+            GameObject proj = Instantiate(bullet, bulletHolder.transform);
+            //proj.GetComponent<Bullet>().ownerID = index;
+            proj.GetComponent<Bullet>().owner = this;
+            proj.GetComponent<Bullet>().gameLogic = this.gameLogic;
+            magazine.Enqueue(proj);
+        }
     }
 
     // Update is called once per frame
@@ -113,9 +124,14 @@ public class PlayerController : MonoBehaviour
     void Shoot()
     {
         //Instantiate(bullet, bulletPoint, true);
-        GameObject proj = Instantiate(bullet, bulletPoint.position, bulletPoint.rotation, bulletHolder);
-        proj.GetComponent<Bullet>().ownerID = index;
-        proj.GetComponent<Bullet>().parent = this.gameObject;
+        if(magazine.Count > 0)
+        {
+            GameObject proj = magazine.Dequeue();
+            proj.transform.position = bulletPoint.position;
+            proj.transform.rotation = bulletPoint.rotation;
+            proj.GetComponent<Bullet>().Shot();
+            
+        }
     }
 
     int Player1Vertical()
@@ -154,8 +170,8 @@ public class PlayerController : MonoBehaviour
         switch(collision.gameObject.tag)
         {
             case "Bullet":
-                bool myBullet = (collision.gameObject.GetComponent<Bullet>().ownerID == index) ? true : false;
-                Debug.Log((myBullet) ? "suicide" : "killed");
+                //bool myBullet = (collision.gameObject.GetComponent<Bullet>().ownerID == index) ? true : false;
+                //Debug.Log((myBullet) ? "suicide" : "killed");
                 alive = false;
                 stats.players[index].Died();
                 //Debug.Log(this.gameObject);

@@ -539,7 +539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerColors:
   - {r: 0.16470587, g: 0.75686276, b: 0.33411017, a: 1}
-  - {r: 255, g: 0, b: 255, a: 1}
+  - {r: 0.9887862, g: 1, b: 0, a: 1}
   mapHolder: {fileID: 2086943957}
   maps: []
   bulletHolder: {fileID: 688128978}
@@ -2500,7 +2500,7 @@ EdgeCollider2D:
   - {x: 3.95, y: 0}
   - {x: 0, y: 0}
   - {x: 0, y: -4}
-  - {x: 3.95, y: -4}
+  - {x: 6, y: -4}
   m_AdjacentStartPoint: {x: 0, y: 0}
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
@@ -3984,9 +3984,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
-  - {fileID: 292434377}
-  - {fileID: 1587384780}
-  - {fileID: 688128978}
   - {fileID: 606975467}
+  - {fileID: 292434377}
+  - {fileID: 688128978}
+  - {fileID: 1587384780}
   - {fileID: 302794669}
   - {fileID: 517023961}

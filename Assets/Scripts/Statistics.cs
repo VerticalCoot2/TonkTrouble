@@ -50,7 +50,7 @@ public class Statistics : MonoBehaviour
 
     public void AddPlayerShit(Color c1,Color c2)
     {
-        Debug.LogWarning($"Elindult\nc1: {c1}\nc2: {c2}");
+        //Debug.LogWarning($"Elindult\nc1: {c1}\nc2: {c2}");
         players.Add(new Player(c1));
         players.Add(new Player(c2));
         p1Raw.color = c1;
