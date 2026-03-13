@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     [Header("Moving")]
     [SerializeField] private float rotationSpeed = 20;
     [SerializeField] private float moveSpeed = 100;
+    public PlayerKeys keys;
+
 
     [Header("Shooting")]
     [SerializeField] private GameObject bullet;
@@ -73,31 +75,12 @@ public class PlayerController : MonoBehaviour
         if(alive)
         {
             #region Rotation
-            switch (index)
-            {
-                case 0:
-                    transform.Rotate(new Vector3(0, 0, (Player1Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
-                    break;
-                case 1:
-                    transform.Rotate(new Vector3(0, 0, (Player2Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
-                    break;
-            }
+            transform.Rotate(new Vector3(0, 0, (Horizontal() * -rotationSpeed * 10 * Time.deltaTime)));
             #endregion
 
-            switch (index)
+            if (Input.GetKeyDown(keys.shoot))
             {
-                case 0:
-                    if (Input.GetKeyDown(KeyCode.Q))
-                    {
-                        Shoot();
-                    }
-                    break;
-                case 1:
-                    if (Input.GetKeyDown(KeyCode.Space))
-                    {
-                        Shoot();
-                    }
-                    break;
+                Shoot();
             }
         }
         else
@@ -110,16 +93,7 @@ public class PlayerController : MonoBehaviour
         //rb.velocity = transform.right * moveSpeed * Input.GetAxisRaw("Vertical");
         if(alive)
         {
-            switch (index)
-            {
-                case 0:
-                    rb.velocity = transform.right * moveSpeed * Player1Vertical();
-                    break;
-
-                case 1:
-                    rb.velocity = transform.right * moveSpeed * Player2Vertical();
-                    break;
-            }
+            rb.velocity = transform.right * moveSpeed * Vertical();
         }
     }
     void Shoot()
@@ -135,52 +109,42 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    int Player1Vertical()
+    int Vertical()
     {
-        if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S)) return 1;
-        else if (!Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) return -1;
-        else return 0;
-    }
-    int Player2Vertical()
-    {
-        if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow)) return 1;
-        else if (!Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow)) return -1;
+        if (Input.GetKey(keys.forward) && !Input.GetKey(keys.backward)) return 1;
+        else if (!Input.GetKey(keys.forward) && Input.GetKey(keys.backward)) return -1;
         else return 0;
     }
 
-    int Player1Horizontal()
+    int Horizontal()
     {
-        if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)) return -1;
-        else if (!Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) return 1;
-        else return 0;
-    }
-    int Player2Horizontal()
-    {
-        if (Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow)) return -1;
-        else if (!Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.RightArrow)) return 1;
+        if (Input.GetKey(keys.left) && !Input.GetKey(keys.right)) return -1;
+        else if (!Input.GetKey(keys.left) && Input.GetKey(keys.right)) return 1;
         else return 0;
     }
 
     public void Killed()
     {
         stats.players[index].Killed();
+        stats.UpdateUI();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        switch(collision.gameObject.tag)
+        switch(collision.gameObject.CompareTag("Bullet"))
         {
-            case "Bullet":
+            case true:
                 //bool myBullet = (collision.gameObject.GetComponent<Bullet>().ownerID == index) ? true : false;
                 //Debug.Log((myBullet) ? "suicide" : "killed");
                 alive = false;
                 stats.players[index].Died();
+                stats.UpdateUI();
                 //Debug.Log(this.gameObject);
                 StartCoroutine(gameLogic.SomeoneDied());
                 gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
                 for(int i = 0; i < gameObject.transform.childCount;i++)
                 {
-                    gameObject.transform.GetChild(i).gameObject.SetActive(false );
+                    gameObject.transform.GetChild(i).gameObject.SetActive(false);
                 }
                 break;
 

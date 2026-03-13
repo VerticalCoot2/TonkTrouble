@@ -9,6 +9,8 @@ public class Bullet : MonoBehaviour
     public PlayerController owner;
     public GameLogic gameLogic;
     Rigidbody2D rb;
+
+    WaitForSeconds lifeTime = new WaitForSeconds(10);
     
     private void Awake()
     {
@@ -34,7 +36,7 @@ public class Bullet : MonoBehaviour
 
     IEnumerator Delete()
     {
-        yield return new WaitForSeconds(10);
+        yield return lifeTime;
         Reload();
     }
 
@@ -47,9 +49,9 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        switch(collision.gameObject.tag)
+        switch(collision.gameObject.CompareTag("Player"))
         {
-            case "Player":
+            case true:
                 Reload();
                 if (collision.gameObject != owner.gameObject)
                 {

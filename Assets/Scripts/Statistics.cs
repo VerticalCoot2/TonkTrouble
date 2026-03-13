@@ -58,7 +58,7 @@ public class Statistics : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void UpdateUI()
     {
         if (players.Count == 2)
         {

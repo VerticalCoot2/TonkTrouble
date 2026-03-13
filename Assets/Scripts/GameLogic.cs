@@ -30,6 +30,36 @@ internal class Map
     }
 }
 
+public class PlayerKeys
+{
+    public KeyCode forward;
+    public KeyCode backward;
+    public KeyCode left;
+    public KeyCode right;
+    public KeyCode shoot;
+    public PlayerKeys(byte i)
+    {
+        switch(i)
+        {
+            case 0:
+                forward = KeyCode.W;
+                backward = KeyCode.S;
+                left = KeyCode.A;
+                right = KeyCode.D;
+                shoot = KeyCode.Q;
+                break;
+            case 1:
+                forward = KeyCode.UpArrow;
+                backward = KeyCode.DownArrow;
+                left = KeyCode.LeftArrow;
+                right = KeyCode.RightArrow;
+                shoot = KeyCode.Space;
+                break;
+        }
+    }
+       
+}
+
 public class GameLogic : MonoBehaviour
 {
     public static ulong round = 0;
@@ -53,14 +83,7 @@ public class GameLogic : MonoBehaviour
     {
         if (mapHolder.transform.childCount > 0)
         {
-            for (int i = 0; i < mapHolder.transform.childCount; i++)
-            {
-                GameObject currentMap = mapHolder.transform.GetChild(i).gameObject;
-                Transform mapsSpawnPoints = currentMap.transform.Find("SpawnPoints").transform;
-                Transform mapsWalls = currentMap.transform.Find("Walls").transform;
-                maps.Add(new Map(currentMap, mapsSpawnPoints, mapsWalls));
-                //Debug.Log(currentMap.transform.Find("Walls"));
-            }
+            NewMap();
         }
 
         for(int i = 0; i < playerHolder.childCount; i++)
@@ -72,7 +95,7 @@ public class GameLogic : MonoBehaviour
             playerControllerScript.parent = playerHolder.gameObject;
 
             //Debug.Log(this.gameObject.GetComponent<GameLogic>());
-            playerControllerScript.gameLogic = this.gameObject.GetComponent<GameLogic>();
+            playerControllerScript.gameLogic = this;
         }
     }
     private void Start()
@@ -112,12 +135,12 @@ public class GameLogic : MonoBehaviour
             mapHolder.transform.GetChild(i).gameObject.SetActive(false);
         }
 
-        for (int i = 0; i < playerHolder.transform.childCount; i++)
+        for (int i = playerHolder.transform.childCount - 1; i >= 0; i--)
         {
             Destroy(playerHolder.transform.GetChild(i).gameObject);
         }
 
-        for (int i = 0; i < bulletHolder.childCount; i++)
+        for (int i = bulletHolder.childCount - 1; i >= 0; i--)
         {
             //bulletHolder.transform.GetChild(i).GetComponent<Bullet>().Reload();
             Destroy(bulletHolder.transform.GetChild(i).gameObject);
@@ -129,7 +152,7 @@ public class GameLogic : MonoBehaviour
         {
             players.Clear();
 
-            int randomMapIndex = UnityEngine.Random.Range(0, mapHolder.transform.childCount);
+            int randomMapIndex = UnityEngine.Random.Range(0, maps.Count);
             mapHolder.transform.GetChild(randomMapIndex).gameObject.SetActive(true);
             spawnPoints = new List<Transform>(maps[randomMapIndex].GetSpawnPoints());
             for (int i = 0; i < 2; i++)
@@ -137,7 +160,7 @@ public class GameLogic : MonoBehaviour
                 GameObject player = Instantiate(playerPrefab, playerHolder);
                 PlayerController playerControllerScript = player.GetComponent<PlayerController>();
                 playerControllerScript.index = (byte)i;
-
+                playerControllerScript.keys = new PlayerKeys((byte)i);
                 playerControllerScript.parent = playerHolder.gameObject;
                 playerControllerScript.gameLogic = this;
                 playerControllerScript.bulletHolder = bulletHolder;
