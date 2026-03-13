@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
             Bullet projB = proj.GetComponent<Bullet>();
             //proj.GetComponent<Bullet>().ownerID = index;
             projB.owner = this;
-            projB.gameLogic = this.gameLogic;
+            projB.gameLogic = this.gameObject.GetComponent<GameLogic>();
             magazine.Enqueue(proj);
         }
     }

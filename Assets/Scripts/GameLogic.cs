@@ -83,24 +83,34 @@ public class GameLogic : MonoBehaviour
     {
         if (mapHolder.transform.childCount > 0)
         {
+            for (int i = 0; i < mapHolder.transform.childCount; i++)
+            {
+                GameObject currentMap = mapHolder.transform.GetChild(i).gameObject;
+                Transform mapsSpawnPoints = currentMap.transform.Find("SpawnPoints").transform;
+                Transform mapsWalls = currentMap.transform.Find("Walls").transform;
+                maps.Add(new Map(currentMap, mapsSpawnPoints, mapsWalls));
+                //Debug.Log(currentMap.transform.Find("Walls"));
+            }
+            Debug.Log(mapHolder.transform.childCount);
             NewMap();
         }
+        
 
-        for(int i = 0; i < playerHolder.childCount; i++)
-        {
-            GameObject THIS = Instantiate(playerPrefab, playerHolder);
-            PlayerController playerControllerScript = THIS.GetComponent<PlayerController>();            
-            playerControllerScript.index = (byte)i;
+        //for (int i = 0; i < playerHolder.childCount; i++)
+        //{groß
+        //    GameObject THIS = Instantiate(playerPrefab, playerHolder);
+        //    PlayerController playerControllerScript = THIS.GetComponent<PlayerController>();            
+        //    playerControllerScript.index = (byte)i;
 
-            playerControllerScript.parent = playerHolder.gameObject;
+        //    playerControllerScript.parent = playerHolder.gameObject;
 
-            //Debug.Log(this.gameObject.GetComponent<GameLogic>());
-            playerControllerScript.gameLogic = this;
-        }
+        //    //Debug.Log(this.gameObject.GetComponent<GameLogic>());
+        //    playerControllerScript.gameLogic = this;
+        //}
     }
     private void Start()
     {
-        NewMap();
+        //NewMap();
         //Debug.Log(stats.AddPlayerShit(playerColors[0], playerColors[1]));
         
         statHolder.AddPlayerShit(playerColors[0], playerColors[1]);
@@ -130,30 +140,37 @@ public class GameLogic : MonoBehaviour
     public void NewMap()
     {
         round++;
-        for(int i = 0; i < mapHolder.transform.childCount; i++)
+        //Debug.Log("New map! Round: " + round);
+        for (int i = 0; i < mapHolder.transform.childCount; i++)
         {
             mapHolder.transform.GetChild(i).gameObject.SetActive(false);
+            Debug.Log("gégz" + i);
         }
 
-        for (int i = playerHolder.transform.childCount - 1; i >= 0; i--)
+        for (int i = 0; i < playerHolder.transform.childCount; i++)
         {
             Destroy(playerHolder.transform.GetChild(i).gameObject);
+            Debug.Log("mancskeksz" + i);
         }
 
-        for (int i = bulletHolder.childCount - 1; i >= 0; i--)
+        for (int i = 0; i < bulletHolder.childCount; i++)
         {
             //bulletHolder.transform.GetChild(i).GetComponent<Bullet>().Reload();
             Destroy(bulletHolder.transform.GetChild(i).gameObject);
+            Debug.Log("Faszalátét" + i);
         }
 
         List<Transform> spawnPoints;
-        
-        if(maps.Count > 0)
+        Debug.Log("kekszzz" + maps.Count);
+        if(mapHolder.transform.childCount > 0)
         {
+            //Debug.Log("gotIn if count");
             players.Clear();
 
             int randomMapIndex = UnityEngine.Random.Range(0, maps.Count);
             mapHolder.transform.GetChild(randomMapIndex).gameObject.SetActive(true);
+            //List<Transform> bleb = 
+            Debug.Log(randomMapIndex);
             spawnPoints = new List<Transform>(maps[randomMapIndex].GetSpawnPoints());
             for (int i = 0; i < 2; i++)
             {
